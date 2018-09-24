@@ -1,5 +1,6 @@
 package com.example.admin.test2;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,12 +11,33 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
+
 public class Results extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+
+        Intent i = getIntent();
+        JSONObject equipo = null;
+        try {
+            equipo = new JSONObject(i.getStringExtra("equipo"));
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        String[] equipoInfoKeys = new String[equipo.length()];
+        Iterator<String> iter = equipo.keys();
+        for(int index = 0; iter.hasNext(); index++){
+            equipoInfoKeys[index] = iter.next();
+        }
+
+
 
         TableLayout table = new TableLayout(this);
 
