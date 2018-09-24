@@ -25,19 +25,24 @@ import org.json.JSONObject;
 
 public class Login extends AppCompatActivity {
     protected static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
+    Button loginButton;
+    TextView userField;
+    TextView passwordField;
+    RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Button loginButton= findViewById(R.id.loginButton);
-        final TextView userField = findViewById((R.id.userField));
-        final TextView passwordField = findViewById((R.id.passwordField));
-        final RequestQueue queue = Volley.newRequestQueue(this);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        loginButton= findViewById(R.id.loginButton);
+        userField = findViewById((R.id.userField));
+        passwordField = findViewById((R.id.passwordField));
+        queue = Volley.newRequestQueue(this);
+        View.OnClickListener loginClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loginButton.setClickable(false);
                 // Here, thisActivity is the current activity
                 if (ContextCompat.checkSelfPermission(Login.this,
                         Manifest.permission.INTERNET)
@@ -50,7 +55,7 @@ public class Login extends AppCompatActivity {
                         // Show an expanation to the user *asynchronously* -- don't block
                         // this thread waiting for the user's response! After the user
                         // sees the explanation, try again to request the permission.
-
+                        loginButton.setClickable(true);
                     } else {
 
                         // No explanation needed, we can request the permission.
@@ -62,6 +67,7 @@ public class Login extends AppCompatActivity {
                         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                         // app-defined int constant. The callback method gets the
                         // result of the request.
+                        loginButton.setClickable(true);
                     }
                 } else {
                     String url = "https://laboratorioasesores.com/NewSIIL/Mantenimiento/Development/testcon.php";
@@ -104,7 +110,15 @@ public class Login extends AppCompatActivity {
                     queue.add(jsonObjectRequest);
                 }
             }
-        });
+        };
+
+        loginButton.setOnClickListener(loginClickListener);
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        loginButton.setClickable(true);
     }
 
     @Override

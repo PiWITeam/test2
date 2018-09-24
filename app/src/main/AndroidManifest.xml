@@ -37,7 +37,8 @@
         <activity
             android:name=".Search"
             android:theme="@style/NoActionBar" />
-        <activity android:name=".QRScan" />
+        <activity android:name=".QRScan"
+            android:theme="@style/NoActionBar" />
         <activity android:name=".Results"></activity>
     </application>
 
