@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@color/Actbackground"
     android:orientation="vertical"
     android:layout_gravity="center_horizontal"
     tools:context=".QRScan">
@@ -15,14 +15,15 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_gravity="center_vertical"
-        android:paddingTop="25dp"/>
+        android:paddingTop="25dp"
+        android:layout_marginTop="25dp"/>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         android:text="@string/escaneaQR"
-        android:textSize="18sp"
-        android:gravity="center" />
+        android:textSize="18sp" />
 </LinearLayout>
