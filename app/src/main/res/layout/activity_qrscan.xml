@@ -13,17 +13,7 @@
     <SurfaceView
         android:id="@+id/cameraPreview"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_gravity="center_vertical"
-        android:paddingTop="25dp"
-        android:layout_marginTop="25dp"/>
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:text="@string/escaneaQR"
-        android:textSize="18sp" />
 </LinearLayout>

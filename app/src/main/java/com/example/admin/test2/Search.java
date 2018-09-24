@@ -25,19 +25,26 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 public class Search extends AppCompatActivity {
+    Button searchButton;
+    RequestQueue queue;
+    Spinner sucursalSpinner;
+    Spinner areaSpinner;
+    Spinner eqpSpinner;
+    Object cacheItemSelected;
+    String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        final Button searchButton= findViewById(R.id.searchButton);
-        final RequestQueue queue = Volley.newRequestQueue(this);
-        final Spinner sucursalSpinner = findViewById(R.id.sucursalDrop);
-        final Spinner areaSpinner = findViewById(R.id.areaDrop);
-        final Spinner eqpSpinner = findViewById(R.id.eqpDrop);
-        final Object cacheItemSelected = new Object();
-        final String url = "https://laboratorioasesores.com/NewSIIL/Mantenimiento/Development/";
+        searchButton = findViewById(R.id.searchButton);
+        queue = Volley.newRequestQueue(this);
+        sucursalSpinner = findViewById(R.id.sucursalDrop);
+        areaSpinner = findViewById(R.id.areaDrop);
+        eqpSpinner = findViewById(R.id.eqpDrop);
+        cacheItemSelected = new Object();
+        url = "https://laboratorioasesores.com/NewSIIL/Mantenimiento/Development/";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "getSucursal.php", null, new Response.Listener<JSONObject>() {
             @Override
@@ -212,6 +219,7 @@ public class Search extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                searchButton.setClickable(false);
                 if (eqpSpinner.getSelectedItemPosition() > 0) {
                     String eqp = eqpSpinner.getSelectedItem().toString();
                     String id = eqp.substring(eqp.indexOf(':') + 1);
@@ -251,9 +259,18 @@ public class Search extends AppCompatActivity {
                         }
                     });
                     queue.add(jsonObjectRequest);
+                } else {
+                    searchButton.setClickable(true);
                 }
             }
         });
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        searchButton.setClickable(true);
     }
 }
