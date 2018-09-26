@@ -17,4 +17,8 @@
     <string name="equipo_label">Equipo</string>
     <string name="searchButton">Buscar</string>
     <string name="escaneaQR">Enfoca el codigo QR para escanear</string>
+
+    <string name="title_activity_graph">Graph</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
