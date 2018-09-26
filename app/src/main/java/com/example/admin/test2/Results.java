@@ -76,7 +76,11 @@ public class Results extends AppCompatActivity {
             equipLabel.setTypeface(Typeface.DEFAULT_BOLD);
 
             TextView valLabel = new TextView(this);
-            valLabel.setText("Atlixco");
+            try{
+                valLabel.setText(equipo.getString(equipoInfoKeys[j]));
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
             valLabel.setTypeface(Typeface.SERIF);
             valLabel.setGravity(Gravity.CENTER_HORIZONTAL);
 

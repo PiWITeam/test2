@@ -86,7 +86,7 @@ public class Login extends AppCompatActivity {
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST ,url, jsonObject, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Intent i = new Intent(getApplicationContext(),Index.class);
+                            Intent i = new Intent(getApplicationContext(),dashboard.class);
                             startActivity(i);
                         }
                     }, new Response.ErrorListener() {

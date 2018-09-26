@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!--<color name="colorPrimary">#ffc107</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="white">#FFFFFF</color>-->
+    <!--<color name="menuBackground">#1C2B35</color>-->
+    <!--<color name="Actbackground">#f3f3f3</color>-->
+    <!-- OTHERS -->
+    <color name="colorPrimary">#1C2B35</color>
+    <color name="colorPrimaryDark">#FFA000</color>
+    <color name="colorBackground">#C2C2C2</color>
+    <color name="lightGray">#EDEDED</color>
+    <color name="deepPurple">#7C4DFF</color>
+    <color name="materialYellow">#FFB300</color>
+    <color name="materialGreen">#00BDD1</color>
+    <color name="pinkAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
-    <color name="menuBackground">#1C2B35</color>
-    <color name="Actbackground">#f3f3f3</color>
-
-    <color name="black_overlay">#66000000</color>
 </resources>
