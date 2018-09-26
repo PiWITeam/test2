@@ -30,6 +30,9 @@ public class Login extends AppCompatActivity {
     TextView passwordField;
     RequestQueue queue;
 
+    static final String STATE_USER = "USER";
+    static final String STATE_PASSWORD = "PASSWORD";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,7 @@ public class Login extends AppCompatActivity {
         userField = findViewById((R.id.userField));
         passwordField = findViewById((R.id.passwordField));
         queue = Volley.newRequestQueue(this);
+
         View.OnClickListener loginClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,6 +99,7 @@ public class Login extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.cancel();
+                                    loginButton.setClickable(true);
                                 }
                             });
 
@@ -102,6 +107,7 @@ public class Login extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.cancel();
+                                    loginButton.setClickable(true);
                                 }
                             });
                             builder.show();
@@ -114,6 +120,7 @@ public class Login extends AppCompatActivity {
 
         loginButton.setOnClickListener(loginClickListener);
     }
+
     @Override
     public void onResume(){
         super.onResume();

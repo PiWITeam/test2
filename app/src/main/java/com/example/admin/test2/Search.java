@@ -2,12 +2,15 @@ package com.example.admin.test2;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 
@@ -32,12 +35,14 @@ public class Search extends AppCompatActivity {
     Spinner eqpSpinner;
     Object cacheItemSelected;
     String url;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
         searchButton = findViewById(R.id.searchButton);
         queue = Volley.newRequestQueue(this);
         sucursalSpinner = findViewById(R.id.sucursalDrop);
@@ -265,6 +270,61 @@ public class Search extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+            @Override
+            public void onRefresh() {
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "getSucursal.php", null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        String[] sucursal = new String[response.length() + 1];
+                        sucursal[0] = "Selecciona Sucursal";
+                        Iterator<String> iter = response.keys();
+                        for(int index = 1; iter.hasNext(); index++){
+                            try {
+                                sucursal[index] = response.getString(iter.next());
+                            } catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+                        sucursalSpinner.setAdapter(new ArrayAdapter<String>(Search.this, android.R.layout.simple_spinner_dropdown_item, sucursal));
+                        String[] empty= {};
+                        areaSpinner.setAdapter(new ArrayAdapter<String>(Search.this, android.R.layout.simple_spinner_dropdown_item, empty));
+                        areaSpinner.setEnabled(false);
+                        eqpSpinner.setAdapter(new ArrayAdapter<String>(Search.this, android.R.layout.simple_spinner_dropdown_item, empty));
+                        eqpSpinner.setEnabled(false);
+
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Search.this);
+                        builder.setTitle("Error");
+                        builder.setMessage(error.getMessage());
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.show();
+                    }
+                });
+                queue.add(jsonObjectRequest);
+            }
+        });
     }
 
     @Override
