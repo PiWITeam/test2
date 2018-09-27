@@ -8,11 +8,11 @@
     <!-- TODO: Update blank fragment layout -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <TableLayout
             android:id="@+id/resultadosTabla"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:padding="10dp"
             android:gravity="center"
             android:background="@drawable/border">

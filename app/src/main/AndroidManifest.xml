@@ -26,11 +26,11 @@
         <activity
             android:name=".Login"
             android:theme="@style/AwesomeTheme">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Index"
@@ -42,13 +42,6 @@
             android:name=".QRScan"
             android:theme="@style/NoActionBar" />
         <activity android:name=".Results" />
-        <activity android:name=".Graph">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".dashboard"
             android:theme="@style/NoActionBar" />

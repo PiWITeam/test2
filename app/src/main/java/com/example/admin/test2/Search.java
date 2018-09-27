@@ -237,7 +237,7 @@ public class Search extends AppCompatActivity {
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url + "getEquipo.php", jsonObject, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Intent i = new Intent(getApplicationContext(), Results.class);
+                            Intent i = new Intent(getApplicationContext(), information.class);
                             i.putExtra("equipo",response.toString());
                             startActivity(i);
                         }

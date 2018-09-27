@@ -1,12 +1,33 @@
 package com.example.admin.test2;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -22,6 +43,8 @@ public class graficas extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    PieChart pieChart;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -58,13 +81,72 @@ public class graficas extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_graficas, container, false);
+        View view=inflater.inflate(R.layout.fragment_graficas, container, false);
+
+        Intent i = getActivity().getIntent();
+        JSONObject equipo = null;
+        try {
+            equipo = new JSONObject(i.getStringExtra("equipo"));
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        pieChart = view.findViewById(R.id.piechart);
+        pieChart.setUsePercentValues(true);
+
+        // IMPORTANT: In a PieChart, no values (Entry) should have the same
+        // xIndex (even if from different DataSets), since no values can be
+        // drawn above each other.
+        List<PieEntry> pieListEntries = new ArrayList<PieEntry>();
+        pieListEntries.add(new PieEntry(8f, "January"));
+        pieListEntries.add(new PieEntry(15f, "February"));
+        pieListEntries.add(new PieEntry(12f, "March"));
+        pieListEntries.add(new PieEntry(25f, "April"));
+        pieListEntries.add(new PieEntry(23f, "May"));
+        pieListEntries.add(new PieEntry(17f, "June"));
+        pieListEntries.add(new PieEntry(40f, "July"));
+
+        PieDataSet dataSet = new PieDataSet(pieListEntries, "Efectividad por mes");
+
+        PieData data = new PieData(dataSet);
+        data.setValueFormatter(new PercentFormatter());
+
+        pieChart.setData(data);
+
+        Description pieDescription = new Description();
+        pieDescription.setText("Grafica efectividad maquina");
+        pieDescription.setTextAlign(Paint.Align.LEFT);
+        pieChart.setDescription(pieDescription);
+        pieChart.setDrawHoleEnabled(false);
+        pieChart.setTransparentCircleRadius(58f);
+        pieChart.setHoleRadius(58f);
+        dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+
+        data.setValueTextSize(13f);
+        data.setValueTextColor(Color.BLACK);
+
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
+
+        pieChart.animateXY(1400, 1400);
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
