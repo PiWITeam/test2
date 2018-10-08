@@ -1,6 +1,5 @@
 package com.example.admin.test2;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,12 +11,12 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link mantenimientos.OnFragmentInteractionListener} interface
+ * {@link Mantenimientos.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link mantenimientos#newInstance} factory method to
+ * Use the {@link Mantenimientos#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class mantenimientos extends Fragment {
+public class Mantenimientos extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,7 +28,7 @@ public class mantenimientos extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public mantenimientos() {
+    public Mantenimientos() {
         // Required empty public constructor
     }
 
@@ -39,11 +38,11 @@ public class mantenimientos extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment mantenimientos.
+     * @return A new instance of fragment Mantenimientos.
      */
     // TODO: Rename and change types and number of parameters
-    public static mantenimientos newInstance(String param1, String param2) {
-        mantenimientos fragment = new mantenimientos();
+    public static Mantenimientos newInstance(String param1, String param2) {
+        Mantenimientos fragment = new Mantenimientos();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

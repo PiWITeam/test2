@@ -70,8 +70,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="50dp"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             android:textColor="@color/white"
+            android:textFontWeight="Bold"
+            android:background="@color/pinkAccent"
             android:text="@string/login_button" />
 
 

@@ -16,7 +16,6 @@ import android.os.Vibrator;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -146,7 +145,7 @@ public class QRScan extends AppCompatActivity {
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Intent i = new Intent(getApplicationContext(), information.class);
+                            Intent i = new Intent(getApplicationContext(), Information.class);
                             i.putExtra("equipo", response.toString());
                             startActivity(i);
                             id[0] = "";

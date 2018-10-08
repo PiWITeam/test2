@@ -86,7 +86,7 @@ public class Login extends AppCompatActivity {
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST ,url, jsonObject, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Intent i = new Intent(getApplicationContext(),dashboard.class);
+                            Intent i = new Intent(getApplicationContext(),Dashboard.class);
                             startActivity(i);
                         }
                     }, new Response.ErrorListener() {
@@ -94,7 +94,14 @@ public class Login extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                             builder.setTitle("Error");
-                            builder.setMessage(error.getMessage());
+                            final String message;
+
+                            if(error.getMessage().equals("org.json.JSONException: Value [] of type org.json.JSONArray cannot be converted to JSONObject")){
+                                message = "Usuario o contraseña incorrectos";
+                            }else{
+                                message = error.getMessage();
+                            }
+                            builder.setMessage(message);
                             builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -103,13 +110,13 @@ public class Login extends AppCompatActivity {
                                 }
                             });
 
-                            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                    loginButton.setClickable(true);
-                                }
-                            });
+//                            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.cancel();
+//                                    loginButton.setClickable(true);
+//                                }
+//                            });
                             builder.show();
                         }
                     });
