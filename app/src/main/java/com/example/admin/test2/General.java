@@ -1,6 +1,5 @@
 package com.example.admin.test2;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -25,12 +24,12 @@ import java.util.Iterator;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link general.OnFragmentInteractionListener} interface
+ * {@link General.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link general#newInstance} factory method to
+ * Use the {@link General#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class general extends Fragment {
+public class General extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -42,7 +41,7 @@ public class general extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public general() {
+    public General() {
         // Required empty public constructor
     }
 
@@ -52,11 +51,11 @@ public class general extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment general.
+     * @return A new instance of fragment General.
      */
     // TODO: Rename and change types and number of parameters
-    public static general newInstance(String param1, String param2) {
-        general fragment = new general();
+    public static General newInstance(String param1, String param2) {
+        General fragment = new General();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -194,7 +193,7 @@ public class general extends Fragment {
      * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * >Communicating with Other Fragments</a> for more Information.
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

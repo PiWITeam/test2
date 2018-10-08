@@ -1,7 +1,5 @@
 package com.example.admin.test2;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -33,12 +31,12 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link graficas.OnFragmentInteractionListener} interface
+ * {@link Graficas.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link graficas#newInstance} factory method to
+ * Use the {@link Graficas#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class graficas extends Fragment {
+public class Graficas extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -52,7 +50,7 @@ public class graficas extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public graficas() {
+    public Graficas() {
         // Required empty public constructor
     }
 
@@ -62,11 +60,11 @@ public class graficas extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment graficas.
+     * @return A new instance of fragment Graficas.
      */
     // TODO: Rename and change types and number of parameters
-    public static graficas newInstance(String param1, String param2) {
-        graficas fragment = new graficas();
+    public static Graficas newInstance(String param1, String param2) {
+        Graficas fragment = new Graficas();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -181,7 +179,7 @@ public class graficas extends Fragment {
      * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * >Communicating with Other Fragments</a> for more Information.
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
