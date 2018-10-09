@@ -136,25 +136,27 @@ public class Mantenimientos extends Fragment {
                 }
 
 
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "getHrasParo.php", requestMantenimiento, new Response.Listener<JSONObject>() {
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "saveMantenimiento.php", requestMantenimiento, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Response", "Ok Mantenimiento guardado");
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                        builder.setTitle("Error");
-                        builder.setMessage(error.getMessage());
+                        builder.setTitle("Exito");
+                        builder.setMessage("Mantenimiento Guardado correctamente");
                         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         });
-
-                        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        builder.show();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        builder.setTitle("Problema");
+                        builder.setMessage("Hubo un error al intentar guardar el mantenimiento");
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
