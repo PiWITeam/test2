@@ -8,59 +8,48 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
-    private List<MantConstructor> mantenimientos;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public TextView nombreLabel;
-        public TextView tipoLabel;
-        public TextView fechaLabel;
-        public ViewHolder(View v) {
-            super(v);
-            nombreLabel = v.findViewById(R.id.equipoLabel);
-            tipoLabel = v.findViewById(R.id.tipoLAbel);
-            fechaLabel = v.findViewById(R.id.fechaLabel);
-        }
+
+public class Adapter extends  RecyclerView.Adapter<Adapter.ViewHolderMantenimiento>{
+    @NonNull
+    ArrayList<MantConstructor> listaMantenimientos;
+
+    public Adapter(ArrayList<MantConstructor> listMantenimientos) {
+        this.listaMantenimientos = listMantenimientos;
     }
 
-//    // Provide a suitable constructor (depends on the kind of dataset)
-//    public Adapter(String[] myDataset) {
-//        mDataset = myDataset;
-//    }
-
-    // Create new views (invoked by the layout manager)
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
+    public ViewHolderMantenimiento onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.resultrecycledview, null);
-        return new ViewHolder(view);
+        View view = inflater.inflate(R.layout.resultrecycledview, null,false);
+        return new ViewHolderMantenimiento(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        MantConstructor mant = mantenimientos.get(position);
-
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-
-        holder.nombreLabel.setText(mant.getNombre());
-        holder.tipoLabel.setText(mant.getTipo());
-        holder.fechaLabel.setText(mant.getFecha());
-
+    public void onBindViewHolder(@NonNull ViewHolderMantenimiento holder, int i) {
+        holder.nombreLabel.setText(listaMantenimientos.get(i).getNombre());
+        holder.tipoLabel.setText(listaMantenimientos.get(i).getTipo());
+        holder.fechaLabel.setText(listaMantenimientos.get(i).getFecha());
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mantenimientos.size();
+        return listaMantenimientos.size();
+    }
+
+    public class ViewHolderMantenimiento extends RecyclerView.ViewHolder {
+
+        TextView nombreLabel, tipoLabel, fechaLabel;
+
+        public ViewHolderMantenimiento(@NonNull View itemView) {
+            super(itemView);
+            nombreLabel = itemView.findViewById(R.id.nombreLabel);
+            tipoLabel = itemView.findViewById(R.id.tipoLabel);
+            fechaLabel = itemView.findViewById(R.id.fechaLabel);
+        }
     }
 }

@@ -9,6 +9,10 @@ public class MantConstructor {
     private String empresa;
     private String fecha;
 
+    public MantConstructor(){
+
+    }
+
     public MantConstructor(int id, String sucursal, String area, String nombre, String tipo, String empresa, String fecha) {
         this.id = id;
         this.sucursal = sucursal;
