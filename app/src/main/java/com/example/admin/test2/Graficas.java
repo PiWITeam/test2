@@ -1,15 +1,25 @@
 package com.example.admin.test2;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.Entry;
@@ -25,6 +35,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -43,6 +55,8 @@ public class Graficas extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     PieChart pieChart;
+    String url;
+    RequestQueue queue;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -86,49 +100,87 @@ public class Graficas extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_graficas, container, false);
+        final View view=inflater.inflate(R.layout.fragment_graficas, container, false);
+
+
+        queue = Volley.newRequestQueue(view.getContext());
+        url = "https://laboratorioasesores.com/NewSIIL/Mantenimiento/Development/";
 
         Intent i = getActivity().getIntent();
         JSONObject equipo = null;
+        JSONObject requestId = null;
         try {
             equipo = new JSONObject(i.getStringExtra("equipo"));
+            requestId = new JSONObject();
+            requestId.put("id", equipo.getString("id"));
         } catch (JSONException e){
             e.printStackTrace();
         }
 
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "getHrasParo.php", requestId, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                String strPorcentajeAnio = "PorcentajeAnio";
+                String strPorcentaParo = "porcentajeParo";
+                List<PieEntry> pieListEntries = new ArrayList<PieEntry>();
+                    try {
+                        pieListEntries.add(new PieEntry(Float.parseFloat(response.getString(strPorcentajeAnio)), strPorcentajeAnio));
+                        pieListEntries.add(new PieEntry(Float.parseFloat(response.getString(strPorcentaParo)), strPorcentaParo));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                PieDataSet dataSet = new PieDataSet(pieListEntries, "Efectividad por año");
+
+                PieData data = new PieData(dataSet);
+                data.setValueFormatter(new PercentFormatter());
+
+                pieChart.setData(data);
+
+                dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+
+                data.setValueTextSize(13f);
+                data.setValueTextColor(Color.BLACK);
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setTitle("Error");
+                builder.setMessage(error.getMessage());
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        });
+        queue.add(jsonObjectRequest);
+
         pieChart = view.findViewById(R.id.piechart);
         pieChart.setUsePercentValues(true);
 
-        // IMPORTANT: In a PieChart, no values (Entry) should have the same
-        // xIndex (even if from different DataSets), since no values can be
-        // drawn above each other.
-        List<PieEntry> pieListEntries = new ArrayList<PieEntry>();
-        pieListEntries.add(new PieEntry(8f, "January"));
-        pieListEntries.add(new PieEntry(15f, "February"));
-        pieListEntries.add(new PieEntry(12f, "March"));
-        pieListEntries.add(new PieEntry(25f, "April"));
-        pieListEntries.add(new PieEntry(23f, "May"));
-        pieListEntries.add(new PieEntry(17f, "June"));
-        pieListEntries.add(new PieEntry(40f, "July"));
-
-        PieDataSet dataSet = new PieDataSet(pieListEntries, "Efectividad por mes");
-
-        PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter());
-
-        pieChart.setData(data);
 
         Description pieDescription = new Description();
         pieDescription.setText("Grafica efectividad maquina");
         pieDescription.setTextAlign(Paint.Align.LEFT);
         pieChart.setDescription(pieDescription);
+        pieChart.getDescription().setEnabled(false);
         pieChart.setDrawHoleEnabled(false);
         pieChart.setTransparentCircleRadius(58f);
         pieChart.setHoleRadius(58f);
-        dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-
-        data.setValueTextSize(13f);
-        data.setValueTextColor(Color.BLACK);
 
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
