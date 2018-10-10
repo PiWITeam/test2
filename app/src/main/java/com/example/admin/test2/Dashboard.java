@@ -1,12 +1,15 @@
 package com.example.admin.test2;
 
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+
+import com.example.admin.test2.ApplockManager.ApplockManager;
 
 import java.util.List;
 
@@ -74,6 +77,12 @@ public class Dashboard extends AppCompatActivity {
 
     }
     @Override
+    public void onStart(){
+        super.onStart();
+        getApp();
+    }
+
+    @Override
     public void onResume(){
         super.onResume();
 
@@ -97,5 +106,16 @@ public class Dashboard extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    public void getApp() {
+        ApplockManager.getInstance().enableDefaultAppLockIfAvailable(this.getApplication());
+    }
+
+    @Override
+    public void onUserInteraction() {
+        super.onUserInteraction();
+        ApplockManager.getInstance().updateTouch();
+        Log.d("TAG", "User interaction to " + this.toString());
     }
 }
