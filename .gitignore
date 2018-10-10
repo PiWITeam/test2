@@ -9,3 +9,4 @@
 /captures
 .externalNativeBuild
 server/
+app/debug/
