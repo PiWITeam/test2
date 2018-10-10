@@ -8,7 +8,8 @@
     <!--<color name="Actbackground">#f3f3f3</color>-->
     <!-- OTHERS -->
     <color name="colorPrimary">#1C2B35</color>
-    <color name="colorPrimaryDark">#FFA000</color>
+    <color name="colorPrimaryDark">#2CB0D6</color>
+    <!--<color name="colorPrimaryDark">#FFA000</color>-->
     <color name="colorBackground">#C2C2C2</color>
     <color name="lightGray">#EDEDED</color>
     <color name="deepPurple">#7C4DFF</color>
