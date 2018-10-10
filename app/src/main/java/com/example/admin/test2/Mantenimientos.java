@@ -1,6 +1,7 @@
 package com.example.admin.test2;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -64,6 +66,8 @@ public class Mantenimientos extends Fragment {
     JSONObject requestMantenimiento;
     RequestQueue queue;
     String url;
+    AlertDialog infoMantDialog;
+    AlertDialog.Builder typeMantDialog;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -173,99 +177,15 @@ public class Mantenimientos extends Fragment {
 
         addMantenancebtn = view.findViewById(R.id.agregar_mantenimiento);
 
+        infoMantDialog = createInfoMantDialog(view);
+        typeMantDialog = createTypeMantDialog(view);
+
         addMantenancebtn.setOnTouchListener(new View.OnTouchListener(){
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_UP){
-
-                    final String[] typosMantenimiento = {"Correctivo", "Preventivo"};
-                    ArrayAdapter<String> typosAdapter = new ArrayAdapter<String>(view.getContext(),android.R.layout.preference_category, typosMantenimiento);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    builder.setTitle("Typo de Mantenimiento");
-                    builder.setAdapter(typosAdapter, new DialogInterface.OnClickListener(){
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String typo = typosMantenimiento[which];
-                            try{
-                                requestMantenimiento.put("tipo_mant", typo.toLowerCase());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                            builder.setTitle("Llena los campos");
-                            LinearLayout dialogLayout = new LinearLayout(builder.getContext());
-                            dialogLayout.setOrientation(LinearLayout.VERTICAL);
-                            dialogLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-                            LinearLayout.LayoutParams verticalParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                            TextView empresaMantLabel = new TextView(dialogLayout.getContext());
-                            empresaMantLabel.setText("Empresa Mantenimiento");
-                            empresaMantLabel.setLayoutParams(verticalParams);
-                            final EditText empresaMant = new EditText(dialogLayout.getContext());
-                            empresaMant.setInputType(InputType.TYPE_CLASS_TEXT);
-                            empresaMant.setLayoutParams(verticalParams);
-
-                            TextView horasParoLabel = new TextView(dialogLayout.getContext());
-                            horasParoLabel.setText("Horas Paro");
-                            horasParoLabel.setLayoutParams(verticalParams);
-                            final EditText horasParo = new EditText(dialogLayout.getContext());
-                            horasParo.setInputType(InputType.TYPE_CLASS_NUMBER);
-                            horasParo.setLayoutParams(verticalParams);
-
-                            TextView descFallaLabel = new TextView(builder.getContext());
-                            descFallaLabel.setText("Description de Falla");
-                            descFallaLabel.setLayoutParams(verticalParams);
-                            final EditText descFalla = new EditText(dialogLayout.getContext());
-                            descFalla.setInputType(InputType.TYPE_CLASS_TEXT);
-                            descFalla.setLayoutParams(verticalParams);
-
-                            dialogLayout.addView(empresaMantLabel);
-                            dialogLayout.addView(empresaMant);
-                            dialogLayout.addView(horasParoLabel);
-                            dialogLayout.addView(horasParo);
-                            dialogLayout.addView(descFallaLabel);
-                            dialogLayout.addView(descFalla);
-                            builder.setView(dialogLayout);
-                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try{
-                                        requestMantenimiento.put("empresa_mant", empresaMant.getText());
-                                        requestMantenimiento.put("horas_paro", horasParo.getText());
-                                        requestMantenimiento.put("desc_falla", descFalla.getText());
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    fechaMantenimiento.show();
-                                }
-                            });
-
-                            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                            builder.show();
-                        }
-                    });
-//                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            fechaMantenimiento.show();
-//                            dialog.cancel();
-//                        }
-//                    });
-
-                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
+                    typeMantDialog.show();
                 }
                 return false;
             }
@@ -311,5 +231,135 @@ public class Mantenimientos extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private AlertDialog.Builder createTypeMantDialog(View view){
+        final Context context = view.getContext();
+        final String[] typosMantenimiento = {"Correctivo", "Preventivo"};
+        ArrayAdapter<String> typosAdapter = new ArrayAdapter<String>(context,android.R.layout.preference_category, typosMantenimiento);
+        AlertDialog.Builder typeMantDialog = new AlertDialog.Builder(context);
+        typeMantDialog.setTitle("Tipo de Mantenimiento");
+        typeMantDialog.setAdapter(typosAdapter, new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String typo = typosMantenimiento[which];
+                try{
+                    requestMantenimiento.put("tipo_mant", typo.toLowerCase());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                infoMantDialog.show();
+            }
+
+
+        });
+
+        typeMantDialog.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        return typeMantDialog;
+    }
+
+    private AlertDialog createInfoMantDialog(View view){
+        final Context context = view.getContext();
+        final AlertDialog.Builder infoMantDialog = new AlertDialog.Builder(context);
+        infoMantDialog.setTitle("Llena los campos");
+        LinearLayout dialogLayout = new LinearLayout(infoMantDialog.getContext());
+        dialogLayout.setOrientation(LinearLayout.VERTICAL);
+        dialogLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        LinearLayout.LayoutParams verticalParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        TextView empresaMantLabel = new TextView(dialogLayout.getContext());
+        empresaMantLabel.setText("Empresa Mantenimiento");
+        empresaMantLabel.setLayoutParams(verticalParams);
+        final EditText empresaMant = new EditText(dialogLayout.getContext());
+        empresaMant.setInputType(InputType.TYPE_CLASS_TEXT);
+        empresaMant.setLayoutParams(verticalParams);
+
+        TextView horasParoLabel = new TextView(dialogLayout.getContext());
+        horasParoLabel.setText("Horas Paro");
+        horasParoLabel.setLayoutParams(verticalParams);
+        final EditText horasParo = new EditText(dialogLayout.getContext());
+        horasParo.setInputType(InputType.TYPE_CLASS_NUMBER);
+        horasParo.setLayoutParams(verticalParams);
+
+        TextView descFallaLabel = new TextView(infoMantDialog.getContext());
+        descFallaLabel.setText("Descripcion de Falla");
+        descFallaLabel.setLayoutParams(verticalParams);
+        final EditText descFalla = new EditText(dialogLayout.getContext());
+        descFalla.setInputType(InputType.TYPE_CLASS_TEXT);
+        descFalla.setLayoutParams(verticalParams);
+
+        dialogLayout.addView(empresaMantLabel);
+        dialogLayout.addView(empresaMant);
+        dialogLayout.addView(horasParoLabel);
+        dialogLayout.addView(horasParo);
+        dialogLayout.addView(descFallaLabel);
+        dialogLayout.addView(descFalla);
+
+        infoMantDialog.setView(dialogLayout);
+        infoMantDialog.setPositiveButton("Ok", null);
+
+        infoMantDialog.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                empresaMant.setText("");
+                horasParo.setText("");
+                descFalla.setText("");
+                empresaMant.setHint("");
+                horasParo.setHint("");
+                descFalla.setHint("");
+            }
+        });
+
+        final AlertDialog mInfoMantDialog = infoMantDialog.create();
+        mInfoMantDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button b = mInfoMantDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!empresaMant.getText().toString().isEmpty() &&
+                                !horasParo.getText().toString().isEmpty() &&
+                                !descFalla.getText().toString().isEmpty()) {
+                            try {
+                                requestMantenimiento.put("empresa_mant", empresaMant.getText());
+                                requestMantenimiento.put("horas_paro", horasParo.getText());
+                                requestMantenimiento.put("desc_falla", descFalla.getText());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            empresaMant.setText("");
+                            horasParo.setText("");
+                            descFalla.setText("");
+                            empresaMant.setHint("");
+                            horasParo.setHint("");
+                            descFalla.setHint("");
+
+                            mInfoMantDialog.dismiss();
+                            fechaMantenimiento.show();
+                        }
+                        else {
+                            if(empresaMant.getText().toString().isEmpty()){
+                                empresaMant.setHint("Campo vacio");
+                            }
+                            if(horasParo.getText().toString().isEmpty()){
+                                horasParo.setHint("Campo vacio");
+                            }
+                            if(descFalla.getText().toString().isEmpty()){
+                                descFalla.setHint("Campo vacio");
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        return mInfoMantDialog;
     }
 }
