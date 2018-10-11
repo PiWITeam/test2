@@ -32,6 +32,8 @@ import java.util.Iterator;
 public class Results extends AppCompatActivity {
     ArrayList<MantConstructor> listaMantenimientos;
     RecyclerView recyclerMantenimientos;
+    RequestQueue queue;
+    String url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,18 +42,54 @@ public class Results extends AppCompatActivity {
         listaMantenimientos = new ArrayList<>();
         recyclerMantenimientos = (RecyclerView) findViewById(R.id.recycleView1);
         recyclerMantenimientos.setLayoutManager(new LinearLayoutManager(this));
+        queue = Volley.newRequestQueue(this);
+        url = "https://laboratorioasesores.com/NewSIIL/Mantenimiento/Development/";
 
         fillMantenimientos();
 
-        Adapter adapter = new Adapter(listaMantenimientos);
-        recyclerMantenimientos.setAdapter(adapter);
-
-
-
     }
     public void fillMantenimientos(){
-        for(int i = 0; i<5; i++){
-            listaMantenimientos.add(new MantConstructor(i,"sucursal","area","nombre","tipo","empresa","fecha"));
-        }
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "getMantenimientos.php", null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject item;
+                int responseLength = response.length() - 1;
+                for(int index = 0; index < responseLength; index++){
+                    String indexStr = Integer.toString(index);
+                    try {
+                        item = response.getJSONObject(indexStr);
+                        String sucursal = item.getString("Sucursal");
+                        String area = item.getString("Area");
+                        String nombre = item.getString("Nombre")+ ":" + item.getString("Id");
+                        String tipo = item.getString("Tipo");
+                        String empresa = item.getString("Empresa");
+                        String fecha = item.getString("Fecha");
+                        listaMantenimientos.add(new MantConstructor(index, sucursal, area, nombre, tipo, empresa, fecha));
+                    } catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+
+                Adapter adapter = new Adapter(listaMantenimientos);
+                recyclerMantenimientos.setAdapter(adapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(Results.this);
+                builder.setTitle("Error");
+                builder.setMessage(error.getMessage());
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        });
+        queue.add(jsonObjectRequest);
     }
 }

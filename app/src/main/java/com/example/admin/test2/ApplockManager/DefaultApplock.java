@@ -16,7 +16,7 @@ public class DefaultApplock implements Application.ActivityLifecycleCallbacks {
 
     private Application mCurrentApp;
 
-    private long WAIT_TIME = 1000; //5*60*1000;
+    private long WAIT_TIME = 5*60*1000;
     private Waiter waiter;
     private Date mLostFocusDate;
 
