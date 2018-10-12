@@ -3,14 +3,21 @@ package com.example.admin.test2;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.InputType;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -60,20 +67,86 @@ public class Results extends AppCompatActivity {
                     String indexStr = Integer.toString(index);
                     try {
                         item = response.getJSONObject(indexStr);
+                        String id = item.getString("Id");
                         String sucursal = item.getString("Sucursal");
                         String area = item.getString("Area");
                         String nombre = item.getString("Nombre")+ ":" + item.getString("Id");
                         String tipo = item.getString("Tipo");
                         String empresa = item.getString("Empresa");
                         String fecha = item.getString("Fecha");
-                        listaMantenimientos.add(new MantConstructor(index, sucursal, area, nombre, tipo, empresa, fecha));
+                        listaMantenimientos.add(new MantConstructor(Integer.parseInt(id), sucursal, area, nombre, tipo, empresa, fecha));
                     } catch (JSONException e){
                         e.printStackTrace();
                     }
                 }
 
                 Adapter adapter = new Adapter(listaMantenimientos);
+                adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(MantConstructor item) {
+                        String areaStr = item.getArea();
+                        String empresStr = item.getEmpresa();
+                        String fechaStr = item.getFecha();
+                        String idStr = Integer.toString(item.getId());
+                        String nombreStr = item.getNombre();
+                        String sucursalStr = item.getSucursal();
+                        String tipoStr = item.getTipo();
+
+                        AlertDialog.Builder mantDialogBuilder = new AlertDialog.Builder(Results.this);
+
+                        LinearLayout dialogLayout = new LinearLayout(mantDialogBuilder.getContext());
+                        LinearLayout.LayoutParams verticalParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        TextView areaView = new TextView(dialogLayout.getContext());
+                        TextView empresaView = new TextView(dialogLayout.getContext());
+                        TextView fechaView = new TextView(dialogLayout.getContext());
+                        TextView idView = new TextView(dialogLayout.getContext());
+                        TextView nombreView = new TextView(dialogLayout.getContext());
+                        TextView sucursalView = new TextView(dialogLayout.getContext());
+                        TextView tipoView = new TextView(dialogLayout.getContext());
+
+                        areaView.setLayoutParams(verticalParams);
+                        empresaView.setLayoutParams(verticalParams);
+                        fechaView.setLayoutParams(verticalParams);
+                        idView.setLayoutParams(verticalParams);
+                        nombreView.setLayoutParams(verticalParams);
+                        sucursalView.setLayoutParams(verticalParams);
+                        tipoView.setLayoutParams(verticalParams);
+
+
+                        areaView.setText("Area: " + areaStr);
+                        empresaView.setText("Empresa: " + empresStr);
+                        fechaView.setText("Fecha: " + fechaStr);
+                        idView.setText("id: " + idStr);
+                        nombreView.setText("Nombre: " + nombreStr);
+                        sucursalView.setText("Sucursal: " + sucursalStr);
+                        tipoView.setText("Tipo: " + tipoStr);
+
+                        dialogLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                        dialogLayout.setOrientation(LinearLayout.VERTICAL);
+                        dialogLayout.setPadding(40,15,40,15);
+                        dialogLayout.addView(idView);
+                        dialogLayout.addView(areaView);
+                        dialogLayout.addView(empresaView);
+                        dialogLayout.addView(fechaView);
+                        dialogLayout.addView(nombreView);
+                        dialogLayout.addView(sucursalView);
+                        dialogLayout.addView(tipoView);
+
+                        mantDialogBuilder.setTitle("Informacion Mantenimiento");
+                        mantDialogBuilder.setView(dialogLayout);
+                        mantDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        mantDialogBuilder.show();
+                    }
+                });
                 recyclerMantenimientos.setAdapter(adapter);
+
             }
         }, new Response.ErrorListener() {
             @Override
