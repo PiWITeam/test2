@@ -12,6 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mant_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/pinkAccent" />
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/agregar_mantenimiento"
             android:layout_width="wrap_content"

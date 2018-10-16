@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.Layout;
 import android.util.Log;
@@ -69,6 +71,9 @@ public class Mantenimientos extends Fragment {
     AlertDialog infoMantDialog;
     AlertDialog.Builder typeMantDialog;
 
+    ArrayList<MantConstructor> listaMantenimientos;
+    RecyclerView recyclerMantenimientos;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -112,6 +117,9 @@ public class Mantenimientos extends Fragment {
         // Inflate the layout for this fragment
         final View view=inflater.inflate(R.layout.fragment_mantenimientos, container, false);
 
+        listaMantenimientos = new ArrayList<>();
+        recyclerMantenimientos =  view.findViewById(R.id.mant_view);
+        recyclerMantenimientos.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         queue= Volley.newRequestQueue(view.getContext());
         url = "https://laboratorioasesores.com/NewSIIL/Mantenimiento/Development/";
@@ -122,10 +130,13 @@ public class Mantenimientos extends Fragment {
         try {
             equipo = new JSONObject(i.getStringExtra("equipo"));
             requestMantenimiento = new JSONObject();
+            requestMantenimiento.put("id", equipo.getString("id"));
             requestMantenimiento.put("id_equipo", equipo.getString("id"));
         } catch (JSONException e){
             e.printStackTrace();
         }
+
+        fillMantenimientos(view);
 
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
@@ -192,6 +203,117 @@ public class Mantenimientos extends Fragment {
         });
 
         return view;
+    }
+
+    public void fillMantenimientos(final View view){
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "getMantenimientos.php", requestMantenimiento, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject item;
+                int responseLength = response.length() - 1;
+                for(int index = 0; index < responseLength; index++){
+                    String indexStr = Integer.toString(index);
+                    try {
+                        item = response.getJSONObject(indexStr);
+                        String id = item.getString("Id");
+                        String sucursal = item.getString("Sucursal");
+                        String area = item.getString("Area");
+                        String nombre = item.getString("Nombre")+ ":" + item.getString("Id");
+                        String tipo = item.getString("Tipo");
+                        String empresa = item.getString("Empresa");
+                        String fecha = item.getString("Fecha");
+                        listaMantenimientos.add(new MantConstructor(Integer.parseInt(id), sucursal, area, nombre, tipo, empresa, fecha));
+                    } catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+
+                Adapter adapter = new Adapter(listaMantenimientos);
+                adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(MantConstructor item) {
+                        String areaStr = item.getArea();
+                        String empresStr = item.getEmpresa();
+                        String fechaStr = item.getFecha();
+                        String idStr = Integer.toString(item.getId());
+                        String nombreStr = item.getNombre();
+                        String sucursalStr = item.getSucursal();
+                        String tipoStr = item.getTipo();
+
+                        AlertDialog.Builder mantDialogBuilder = new AlertDialog.Builder(view.getContext());
+
+                        LinearLayout dialogLayout = new LinearLayout(mantDialogBuilder.getContext());
+                        LinearLayout.LayoutParams verticalParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        TextView areaView = new TextView(dialogLayout.getContext());
+                        TextView empresaView = new TextView(dialogLayout.getContext());
+                        TextView fechaView = new TextView(dialogLayout.getContext());
+                        TextView idView = new TextView(dialogLayout.getContext());
+                        TextView nombreView = new TextView(dialogLayout.getContext());
+                        TextView sucursalView = new TextView(dialogLayout.getContext());
+                        TextView tipoView = new TextView(dialogLayout.getContext());
+
+                        areaView.setLayoutParams(verticalParams);
+                        empresaView.setLayoutParams(verticalParams);
+                        fechaView.setLayoutParams(verticalParams);
+                        idView.setLayoutParams(verticalParams);
+                        nombreView.setLayoutParams(verticalParams);
+                        sucursalView.setLayoutParams(verticalParams);
+                        tipoView.setLayoutParams(verticalParams);
+
+
+                        areaView.setText("Area: " + areaStr);
+                        empresaView.setText("Empresa: " + empresStr);
+                        fechaView.setText("Fecha: " + fechaStr);
+                        idView.setText("id: " + idStr);
+                        nombreView.setText("Nombre: " + nombreStr);
+                        sucursalView.setText("Sucursal: " + sucursalStr);
+                        tipoView.setText("Tipo: " + tipoStr);
+
+                        dialogLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                        dialogLayout.setOrientation(LinearLayout.VERTICAL);
+                        dialogLayout.setPadding(40,15,40,15);
+                        dialogLayout.addView(idView);
+                        dialogLayout.addView(areaView);
+                        dialogLayout.addView(empresaView);
+                        dialogLayout.addView(fechaView);
+                        dialogLayout.addView(nombreView);
+                        dialogLayout.addView(sucursalView);
+                        dialogLayout.addView(tipoView);
+
+                        mantDialogBuilder.setTitle("Informacion Mantenimiento");
+                        mantDialogBuilder.setView(dialogLayout);
+                        mantDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        mantDialogBuilder.show();
+                    }
+                });
+                recyclerMantenimientos.setAdapter(adapter);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setTitle("Error");
+                builder.setMessage(error.getMessage());
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        });
+        queue.add(jsonObjectRequest);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
