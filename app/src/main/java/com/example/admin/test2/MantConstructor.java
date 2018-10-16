@@ -1,5 +1,7 @@
 package com.example.admin.test2;
 
+import org.json.JSONObject;
+
 public class MantConstructor {
     private int id;
     private String sucursal;
@@ -8,12 +10,13 @@ public class MantConstructor {
     private String tipo;
     private String empresa;
     private String fecha;
+    private JSONObject mantenimiento;
 
     public MantConstructor(){
 
     }
 
-    public MantConstructor(int id, String sucursal, String area, String nombre, String tipo, String empresa, String fecha) {
+    public MantConstructor(int id, String sucursal, String area, String nombre, String tipo, String empresa, String fecha, JSONObject mantenimiento) {
         this.id = id;
         this.sucursal = sucursal;
         this.area = area;
@@ -21,6 +24,7 @@ public class MantConstructor {
         this.tipo = tipo;
         this.empresa = empresa;
         this.fecha = fecha;
+        this.mantenimiento = mantenimiento;
     }
 
     public int getId() {
@@ -50,4 +54,6 @@ public class MantConstructor {
     public String getFecha() {
         return fecha;
     }
+
+    public JSONObject getMantenimiento () { return mantenimiento;   }
 }

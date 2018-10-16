@@ -74,7 +74,7 @@ public class Results extends AppCompatActivity {
                         String tipo = item.getString("Tipo");
                         String empresa = item.getString("Empresa");
                         String fecha = item.getString("Fecha");
-                        listaMantenimientos.add(new MantConstructor(Integer.parseInt(id), sucursal, area, nombre, tipo, empresa, fecha));
+                        listaMantenimientos.add(new MantConstructor(Integer.parseInt(id), sucursal, area, nombre, tipo, empresa, fecha, item));
                     } catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -83,55 +83,33 @@ public class Results extends AppCompatActivity {
                 Adapter adapter = new Adapter(listaMantenimientos);
                 adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
                     @Override
-                    public void onItemClick(MantConstructor item) {
-                        String areaStr = item.getArea();
-                        String empresStr = item.getEmpresa();
-                        String fechaStr = item.getFecha();
-                        String idStr = Integer.toString(item.getId());
-                        String nombreStr = item.getNombre();
-                        String sucursalStr = item.getSucursal();
-                        String tipoStr = item.getTipo();
-
+                    public void onItemClick(JSONObject item) {
                         AlertDialog.Builder mantDialogBuilder = new AlertDialog.Builder(Results.this);
 
                         LinearLayout dialogLayout = new LinearLayout(mantDialogBuilder.getContext());
                         LinearLayout.LayoutParams verticalParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                        TextView areaView = new TextView(dialogLayout.getContext());
-                        TextView empresaView = new TextView(dialogLayout.getContext());
-                        TextView fechaView = new TextView(dialogLayout.getContext());
-                        TextView idView = new TextView(dialogLayout.getContext());
-                        TextView nombreView = new TextView(dialogLayout.getContext());
-                        TextView sucursalView = new TextView(dialogLayout.getContext());
-                        TextView tipoView = new TextView(dialogLayout.getContext());
-
-                        areaView.setLayoutParams(verticalParams);
-                        empresaView.setLayoutParams(verticalParams);
-                        fechaView.setLayoutParams(verticalParams);
-                        idView.setLayoutParams(verticalParams);
-                        nombreView.setLayoutParams(verticalParams);
-                        sucursalView.setLayoutParams(verticalParams);
-                        tipoView.setLayoutParams(verticalParams);
-
-
-                        areaView.setText("Area: " + areaStr);
-                        empresaView.setText("Empresa: " + empresStr);
-                        fechaView.setText("Fecha: " + fechaStr);
-                        idView.setText("id: " + idStr);
-                        nombreView.setText("Nombre: " + nombreStr);
-                        sucursalView.setText("Sucursal: " + sucursalStr);
-                        tipoView.setText("Tipo: " + tipoStr);
-
                         dialogLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
                         dialogLayout.setOrientation(LinearLayout.VERTICAL);
                         dialogLayout.setPadding(40,15,40,15);
-                        dialogLayout.addView(idView);
-                        dialogLayout.addView(areaView);
-                        dialogLayout.addView(empresaView);
-                        dialogLayout.addView(fechaView);
-                        dialogLayout.addView(nombreView);
-                        dialogLayout.addView(sucursalView);
-                        dialogLayout.addView(tipoView);
+
+                        Iterator<String> iter = item.keys();
+
+                        for (;iter.hasNext();) {
+                            String valueKey = iter.next();
+                            TextView valueView = new TextView(dialogLayout.getContext());
+                            valueView.setLayoutParams(verticalParams);
+                            try {
+                                if(valueKey.equals("Nombre")){
+                                    valueView.setText(valueKey + ": " + item.get(valueKey) + ":" + item.get("Id"));
+                                } else {
+                                    valueView.setText(valueKey + ": " + item.get(valueKey));
+                                }
+                            } catch(JSONException e) {
+                                e.printStackTrace();
+                                valueView.setText(valueKey + ": ");
+                            }
+                            dialogLayout.addView(valueView);
+                        }
 
                         mantDialogBuilder.setTitle("Informacion Mantenimiento");
                         mantDialogBuilder.setView(dialogLayout);

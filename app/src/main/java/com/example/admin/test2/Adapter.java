@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,13 +65,13 @@ public class Adapter extends  RecyclerView.Adapter<Adapter.ViewHolderMantenimien
             itemView.findViewById(R.id.cardView1).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onItemClickListener.onItemClick(item);
+                    onItemClickListener.onItemClick(item.getMantenimiento());
                 }
             });
         }
     }
 
     public interface OnItemClickListener{
-        void onItemClick(MantConstructor item);
+        void onItemClick(JSONObject item);
     }
 }
