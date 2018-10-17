@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +17,7 @@ import android.text.InputType;
 import android.text.Layout;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +27,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -237,33 +241,52 @@ public class Mantenimientos extends Fragment {
                     public void onItemClick(JSONObject item) {
                         AlertDialog.Builder mantDialogBuilder = new AlertDialog.Builder(view.getContext());
 
-                        LinearLayout dialogLayout = new LinearLayout(mantDialogBuilder.getContext());
-                        LinearLayout.LayoutParams verticalParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        dialogLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-                        dialogLayout.setOrientation(LinearLayout.VERTICAL);
-                        dialogLayout.setPadding(40,15,40,15);
+                        TableLayout table = new TableLayout(view.getContext());
+                        table.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+                        table.setGravity(Gravity.CENTER);
+                        table.setShrinkAllColumns(true);
+                        table.setBaselineAligned(true);
+                        TableLayout.LayoutParams verticalParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
 
                         Iterator<String> iter = item.keys();
 
                         for (;iter.hasNext();) {
                             String valueKey = iter.next();
-                            TextView valueView = new TextView(dialogLayout.getContext());
-                            valueView.setLayoutParams(verticalParams);
-                            try {
-                                if(valueKey.equals("Nombre")){
-                                    valueView.setText(valueKey + ": " + item.get(valueKey) + ":" + item.get("Id"));
+                            TableRow row = new TableRow(view.getContext());
+                            row.setLayoutParams(verticalParams);
+                            row.setPadding(40,10,40,0);
+                            row.setGravity(Gravity.CENTER);
+
+                            TextView equipLabel = new TextView(view.getContext());
+                            equipLabel.setText(valueKey);
+                            equipLabel.setTypeface(Typeface.DEFAULT_BOLD);
+                            equipLabel.setTextColor(Color.parseColor("#FFFFFF"));
+                            equipLabel.setBackgroundColor(Color.parseColor("#000000"));
+                            equipLabel.setPadding(15,1,15,1);
+
+                            TextView valLabel = new TextView(view.getContext());
+                            try{
+                                if(valueKey.equals("Nombre")) {
+                                    valLabel.setText(item.getString(valueKey) + ":" + item.getString("Id"));
                                 } else {
-                                    valueView.setText(valueKey + ": " + item.get(valueKey));
+                                    valLabel.setText(item.getString(valueKey));
                                 }
-                            } catch(JSONException e) {
+                            }catch(JSONException e){
                                 e.printStackTrace();
-                                valueView.setText(valueKey + ": ");
                             }
-                            dialogLayout.addView(valueView);
+                            valLabel.setTypeface(Typeface.SERIF);
+                            valLabel.setGravity(Gravity.CENTER_HORIZONTAL);
+                            valLabel.setBackgroundColor(Color.parseColor("#EEEEEE"));
+                            valLabel.setPadding(15,1,15,1);
+
+                            row.addView(equipLabel);
+                            row.addView(valLabel);
+
+                            table.addView(row);
                         }
 
                         mantDialogBuilder.setTitle("Informacion Mantenimiento");
-                        mantDialogBuilder.setView(dialogLayout);
+                        mantDialogBuilder.setView(table);
                         mantDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
