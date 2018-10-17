@@ -14,9 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.text.Layout;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,20 +35,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -70,7 +61,9 @@ public class Mantenimientos extends Fragment {
     // Layout Components
     FloatingActionButton addMantenancebtn;
     DatePickerDialog fechaMantenimiento;
-    JSONObject requestMantenimiento;
+    JSONObject requestSaveMantenimiento;
+    JSONObject requestGetMantenimiento;
+    JSONObject equipo;
     RequestQueue queue;
     String url;
     AlertDialog infoMantDialog;
@@ -130,13 +123,12 @@ public class Mantenimientos extends Fragment {
         url = "https://laboratorioasesores.com/NewSIIL/Mantenimiento/Development/";
 
         Intent i = getActivity().getIntent();
-        JSONObject equipo = null;
-        requestMantenimiento = null;
+
+        requestGetMantenimiento = null;
         try {
             equipo = new JSONObject(i.getStringExtra("equipo"));
-            requestMantenimiento = new JSONObject();
-            requestMantenimiento.put("id", equipo.getString("id"));
-            requestMantenimiento.put("id_equipo", equipo.getString("id"));
+            requestGetMantenimiento = new JSONObject();
+            requestGetMantenimiento.put("id", equipo.getString("id"));
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -150,13 +142,13 @@ public class Mantenimientos extends Fragment {
                 month++;
                 String fecha = year + "-" + dayOfMonth + "-" + month;
                 try{
-                    requestMantenimiento.put("fecha", fecha);
+                    requestSaveMantenimiento.put("fecha", fecha);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "saveMantenimiento.php", requestMantenimiento, new Response.Listener<JSONObject>() {
+                Log.d("Mantenimiento Json", requestSaveMantenimiento.toString());
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "saveMantenimiento.php", requestSaveMantenimiento, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
@@ -173,6 +165,7 @@ public class Mantenimientos extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
                         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                         builder.setTitle("Problema");
                         builder.setMessage("Hubo un error al intentar guardar el mantenimiento");
@@ -201,6 +194,13 @@ public class Mantenimientos extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_UP){
+                    requestSaveMantenimiento = null;
+                    try {
+                        requestSaveMantenimiento = new JSONObject();
+                        requestSaveMantenimiento.put("id_equipo", equipo.getString("id"));
+                    } catch (JSONException e){
+                        e.printStackTrace();
+                    }
                     typeMantDialog.show();
                 }
                 return false;
@@ -213,7 +213,7 @@ public class Mantenimientos extends Fragment {
     public void fillMantenimientos(final View view){
 
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "getMantenimientos.php", requestMantenimiento, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,url + "getMantenimientos.php", requestGetMantenimiento, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 JSONObject item;
@@ -395,7 +395,7 @@ public class Mantenimientos extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 String typo = typosMantenimiento[which];
                 try{
-                    requestMantenimiento.put("tipo_mant", typo.toLowerCase());
+                    requestSaveMantenimiento.put("tipo_mant", typo.toLowerCase());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -479,9 +479,9 @@ public class Mantenimientos extends Fragment {
                                 !horasParo.getText().toString().isEmpty() &&
                                 !descFalla.getText().toString().isEmpty()) {
                             try {
-                                requestMantenimiento.put("empresa_mant", empresaMant.getText());
-                                requestMantenimiento.put("horas_paro", horasParo.getText());
-                                requestMantenimiento.put("desc_falla", descFalla.getText());
+                                requestSaveMantenimiento.put("empresa_mant", empresaMant.getText());
+                                requestSaveMantenimiento.put("horas_paro", horasParo.getText());
+                                requestSaveMantenimiento.put("desc_falla", descFalla.getText());
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

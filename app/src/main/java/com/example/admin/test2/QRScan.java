@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.pm.PackageManager;
 import android.os.Vibrator;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -90,10 +91,13 @@ public class QRScan extends AppCompatActivity {
     public void onResume(){
         super.onResume();
 
-        barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.QR_CODE).build();
+        if(barcodeDetector == null) {
+            barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.QR_CODE).build();
+        }
 
-        cameraSource = new CameraSource.Builder(this, barcodeDetector).setAutoFocusEnabled(true).build();
-
+        if(cameraSource == null) {
+            cameraSource = new CameraSource.Builder(this, barcodeDetector).setAutoFocusEnabled(true).build();
+        }
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -101,7 +105,9 @@ public class QRScan extends AppCompatActivity {
                     return;
                 }
                 try {
-                    cameraSource.start(surfaceView.getHolder());
+                    if(cameraSource != null) {
+                        cameraSource.start(surfaceView.getHolder());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -243,5 +249,87 @@ public class QRScan extends AppCompatActivity {
                 return;
             }
         }
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                barcodeDetector = new BarcodeDetector.Builder(QRScan.this).setBarcodeFormats(Barcode.QR_CODE).build();
+
+                cameraSource = new CameraSource.Builder(QRScan.this, barcodeDetector).setAutoFocusEnabled(true).build();
+
+                barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+                    @Override
+                    public void release() {
+
+                    }
+
+                    @Override
+                    public void receiveDetections(Detector.Detections<Barcode> detections) {
+                        final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
+                        if (qrcodes.size() != 0 && !id[0].equals(qrcodes.valueAt(0).rawValue.toString())) {
+                            id[0] = qrcodes.valueAt(0).rawValue;
+                            Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibrator.vibrate(1000);
+
+                            String url = "https://laboratorioasesores.com/NewSIIL/Mantenimiento/Development/getEquipo.php";
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("id", id[0]);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Intent i = new Intent(getApplicationContext(), Information.class);
+                                    i.putExtra("equipo", response.toString());
+                                    startActivity(i);
+                                    id[0] = "";
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(QRScan.this);
+                                    builder.setTitle("Error");
+                                    builder.setMessage(error.getMessage());
+                                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                            id[0] = "";
+                                        }
+                                    });
+
+                                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                            id[0] = "";
+                                        }
+                                    });
+                                    builder.show();
+                                }
+                            });
+                            queue.add(jsonObjectRequest);
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    cameraSource.stop();
+                                }
+                            });
+                        }
+                    }
+                });
+
+                Log.d("Camera", cameraSource != null ? "no es nula" : "es nula");
+
+            }
+        });
     }
 }
