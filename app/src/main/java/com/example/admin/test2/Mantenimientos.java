@@ -244,9 +244,11 @@ public class Mantenimientos extends Fragment {
                         TableLayout table = new TableLayout(view.getContext());
                         table.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
                         table.setGravity(Gravity.CENTER);
-                        table.setShrinkAllColumns(true);
+                        table.setColumnShrinkable(0, true);
+                        table.setColumnStretchable(1, true);
                         table.setBaselineAligned(true);
-                        TableLayout.LayoutParams verticalParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
+
+                        TableRow.LayoutParams verticalParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
 
                         Iterator<String> iter = item.keys();
 
@@ -254,14 +256,14 @@ public class Mantenimientos extends Fragment {
                             String valueKey = iter.next();
                             TableRow row = new TableRow(view.getContext());
                             row.setLayoutParams(verticalParams);
-                            row.setPadding(40,10,40,0);
+                            row.setPadding(0,1,0,1);
                             row.setGravity(Gravity.CENTER);
 
                             TextView equipLabel = new TextView(view.getContext());
                             equipLabel.setText(valueKey);
                             equipLabel.setTypeface(Typeface.DEFAULT_BOLD);
                             equipLabel.setTextColor(Color.parseColor("#FFFFFF"));
-                            equipLabel.setBackgroundColor(Color.parseColor("#000000"));
+                            equipLabel.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                             equipLabel.setPadding(15,1,15,1);
 
                             TextView valLabel = new TextView(view.getContext());
@@ -285,16 +287,40 @@ public class Mantenimientos extends Fragment {
                             table.addView(row);
                         }
 
-                        mantDialogBuilder.setTitle("Informacion Mantenimiento");
-                        mantDialogBuilder.setView(table);
-                        mantDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        TextView title = new TextView(view.getContext());
+                        title.setTypeface(Typeface.DEFAULT_BOLD);
+                        title.setTextColor(Color.WHITE);
+                        title.setTextSize(18);
+                        title.setPadding(25,15,25,15);
+                        title.setText("Informacion Mantenimiento");
+                        title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+
+                        LinearLayout dialogLayout = new LinearLayout(view.getContext());
+                        dialogLayout.setOrientation(LinearLayout.VERTICAL);
+                        Button positive = new Button(view.getContext());
+                        positive.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                        positive.setTextColor(Color.WHITE);
+                        positive.animate();
+
+
+                        final AlertDialog mantDialog = mantDialogBuilder.create();
+
+                        positive.setText("Ok");
+                        positive.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
+                            public void onClick(View v) {
+                                mantDialog.dismiss();
                             }
                         });
 
-                        mantDialogBuilder.show();
+                        dialogLayout.addView(table);
+                        dialogLayout.addView(positive);
+
+                        mantDialog.setView(dialogLayout);
+                        mantDialog.setCustomTitle(title);
+
+                        mantDialog.show();
                     }
                 });
                 recyclerMantenimientos.setAdapter(adapter);
