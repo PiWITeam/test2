@@ -1,5 +1,6 @@
 package com.example.admin.test2;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -11,6 +12,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 
 public class Information extends AppCompatActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener  {
@@ -30,6 +35,8 @@ public class Information extends AppCompatActivity implements ActionBar.TabListe
      */
     private ViewPager mViewPager;
 
+    Toolbar infoToolBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +47,9 @@ public class Information extends AppCompatActivity implements ActionBar.TabListe
         // Create the Adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        infoToolBar = findViewById(R.id.toolbar);
+        setSupportActionBar(infoToolBar);
 
         // Set up the ViewPager with the sections Adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -164,5 +174,33 @@ public class Information extends AppCompatActivity implements ActionBar.TabListe
             }
             return section;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_items, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        Intent i;
+        switch (id){
+            case R.id.action_menu:
+                i = new Intent(getApplicationContext(),Dashboard.class);
+                startActivity(i);
+                break;
+            case R.id.action_scan:
+                i = new Intent(getApplicationContext(),QRScan.class);
+                startActivity(i);
+                break;
+            case R.id.action_busqueda:
+                i = new Intent(getApplicationContext(),Search.class);
+                startActivity(i);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

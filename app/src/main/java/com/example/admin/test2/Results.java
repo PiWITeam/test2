@@ -11,10 +11,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -48,10 +52,14 @@ public class Results extends AppCompatActivity {
     RecyclerView recyclerMantenimientos;
     RequestQueue queue;
     String url;
+    Toolbar resultsToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+
+        resultsToolbar = findViewById(R.id.toolbar_results);
+        setSupportActionBar(resultsToolbar);
 
         listaMantenimientos = new ArrayList<>();
         recyclerMantenimientos = (RecyclerView) findViewById(R.id.recycleView1);
@@ -195,5 +203,33 @@ public class Results extends AppCompatActivity {
             }
         });
         queue.add(jsonObjectRequest);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_items, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        Intent i;
+        switch (id){
+            case R.id.action_menu:
+                i = new Intent(getApplicationContext(),Dashboard.class);
+                startActivity(i);
+                break;
+            case R.id.action_scan:
+                i = new Intent(getApplicationContext(),QRScan.class);
+                startActivity(i);
+                break;
+            case R.id.action_busqueda:
+                i = new Intent(getApplicationContext(),Search.class);
+                startActivity(i);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
