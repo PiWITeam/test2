@@ -41,7 +41,9 @@
         <activity
             android:name=".QRScan"
             android:theme="@style/NoActionBar" />
-        <activity android:name=".Results" />
+        <activity
+            android:name=".Results"
+            android:theme="@style/NoActionBar"/>
         <activity
             android:name=".Dashboard"
             android:theme="@style/NoActionBar" />
