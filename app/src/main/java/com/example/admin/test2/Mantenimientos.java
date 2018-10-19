@@ -13,9 +13,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +29,9 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.Scroller;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -38,6 +45,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -419,9 +427,12 @@ public class Mantenimientos extends Fragment {
         final Context context = view.getContext();
         final AlertDialog.Builder infoMantDialog = new AlertDialog.Builder(context);
         infoMantDialog.setTitle("Llena los campos");
+
+        ScrollView scrollView = new ScrollView(infoMantDialog.getContext());
+        scrollView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         LinearLayout dialogLayout = new LinearLayout(infoMantDialog.getContext());
         dialogLayout.setOrientation(LinearLayout.VERTICAL);
-        dialogLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        dialogLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         LinearLayout.LayoutParams verticalParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         TextView empresaMantLabel = new TextView(dialogLayout.getContext());
@@ -438,21 +449,84 @@ public class Mantenimientos extends Fragment {
         horasParo.setInputType(InputType.TYPE_CLASS_NUMBER);
         horasParo.setLayoutParams(verticalParams);
 
+        TextView costoLabel = new TextView(dialogLayout.getContext());
+        costoLabel.setText("Costo Mant");
+        costoLabel.setLayoutParams(verticalParams);
+        LinearLayout costoLayout = new LinearLayout(view.getContext());
+        costoLayout.setOrientation(LinearLayout.HORIZONTAL);
+        costoLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        TextView sign = new TextView(view.getContext());
+        sign.setText("$");
+        final EditText costoEnteros = new EditText(costoLayout.getContext());
+        costoEnteros.setInputType(InputType.TYPE_CLASS_NUMBER);
+        costoEnteros.setText("0");
+        costoEnteros.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus && costoEnteros.length() < 1){
+                    costoEnteros.setText("0");
+                }
+            }
+        });
+        TextView dotSign = new TextView(view.getContext());
+        dotSign.setText(".");
+        final EditText costoDecimales = new EditText(costoLayout.getContext());
+        costoDecimales.setInputType(InputType.TYPE_CLASS_NUMBER);
+        costoDecimales.setFilters(new InputFilter[]{new InputFilter.LengthFilter(2)});
+        costoDecimales.setText("00");
+        costoDecimales.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Editable costoText = costoDecimales.getEditableText();
+                Log.d("costoText Length", String.valueOf(costoText.length()));
+                int unicodeInput = event.getUnicodeChar();
+                if(event.getAction() == KeyEvent.ACTION_DOWN && (unicodeInput >= 48 && unicodeInput <=57 ) ){
+                    if(costoText.length() < 1) {
+                        costoText.append('0');
+                    } else if(costoText.length()>=2){
+                        costoText.delete(0, 1);
+                        costoText.append((char) unicodeInput);
+                    }
+                }
+                return false;
+            }
+        });
+        costoDecimales.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    if(costoDecimales.length() < 1) {
+                        costoDecimales.setText("00");
+                    } else if(costoDecimales.length() < 2){
+                        costoDecimales.append("0");
+                    }
+                }
+            }
+        });
+        costoLayout.addView(sign);
+        costoLayout.addView(costoEnteros);
+        costoLayout.addView(dotSign);
+        costoLayout.addView(costoDecimales);
+
         TextView descFallaLabel = new TextView(infoMantDialog.getContext());
         descFallaLabel.setText("Descripcion de Falla");
         descFallaLabel.setLayoutParams(verticalParams);
         final EditText descFalla = new EditText(dialogLayout.getContext());
-        descFalla.setInputType(InputType.TYPE_CLASS_TEXT);
+        descFalla.setInputType(InputType.TYPE_CLASS_NUMBER);
         descFalla.setLayoutParams(verticalParams);
 
         dialogLayout.addView(empresaMantLabel);
         dialogLayout.addView(empresaMant);
         dialogLayout.addView(horasParoLabel);
         dialogLayout.addView(horasParo);
+        dialogLayout.addView(costoLabel);
+        dialogLayout.addView(costoLayout);
         dialogLayout.addView(descFallaLabel);
         dialogLayout.addView(descFalla);
 
-        infoMantDialog.setView(dialogLayout);
+        scrollView.addView(dialogLayout);
+
+        infoMantDialog.setView(scrollView);
         infoMantDialog.setPositiveButton("Ok", null);
 
         infoMantDialog.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -464,6 +538,8 @@ public class Mantenimientos extends Fragment {
                 empresaMant.setHint("");
                 horasParo.setHint("");
                 descFalla.setHint("");
+                costoEnteros.setText("0");
+                costoDecimales.setText("00");
             }
         });
 
@@ -478,10 +554,12 @@ public class Mantenimientos extends Fragment {
                         if(!empresaMant.getText().toString().isEmpty() &&
                                 !horasParo.getText().toString().isEmpty() &&
                                 !descFalla.getText().toString().isEmpty()) {
+                            String costo = costoEnteros.getText() + "." + costoDecimales.getText();
                             try {
                                 requestSaveMantenimiento.put("empresa_mant", empresaMant.getText());
                                 requestSaveMantenimiento.put("horas_paro", horasParo.getText());
                                 requestSaveMantenimiento.put("desc_falla", descFalla.getText());
+//                                requestSaveMantenimiento.put("costo", costo);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorBackground"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:weightSum="8"
+    tools:context=".Index">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:alignmentMode="alignBounds"
+        android:columnCount="2"
+        android:columnOrderPreserved="false"
+        android:padding="14dp"
+        android:rowCount="2">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/scanButton"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@drawable/roundcorner"
+                android:contentDescription="@string/qr_scan"
+                android:padding="20dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/scan" />
+
+            <ImageButton
+                android:id="@+id/searchButton"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:contentDescription="@string/man_search"
+                android:padding="20dp"
+                android:scaleType="fitCenter"
+                android:background="@drawable/roundcorner"
+                app:srcCompat="@drawable/search" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/recentButton"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:contentDescription="@string/recent"
+                android:padding="20dp"
+                android:scaleType="fitCenter"
+                android:background="@drawable/roundcorner"
+                app:srcCompat="@drawable/recent" />
+
+            <ImageButton
+                android:id="@+id/logoutButton"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@drawable/roundcorner"
+                android:contentDescription="@string/logout"
+                android:padding="20dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/logout" />
+        </LinearLayout>
+    </GridLayout>
+
+</LinearLayout>
