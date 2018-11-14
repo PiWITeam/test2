@@ -104,8 +104,7 @@ public class General extends Fragment {
 
         TableLayout table = (TableLayout) view.findViewById(R.id.resultadosTabla);
         // Inflate the layout for this fragment
-        table.setColumnShrinkable(0, true);
-        table.setColumnStretchable(1, true);
+        table.setStretchAllColumns(true);
 
         TableRow rowTitle = new TableRow(getActivity());
         rowTitle.setGravity(Gravity.CENTER_HORIZONTAL);

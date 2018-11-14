@@ -136,7 +136,7 @@ public class Mantenimientos extends Fragment {
         try {
             equipo = new JSONObject(i.getStringExtra("equipo"));
             requestGetMantenimiento = new JSONObject();
-            requestGetMantenimiento.put("id", equipo.getString("id"));
+            requestGetMantenimiento.put("id", equipo.getString("Id"));
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -205,7 +205,7 @@ public class Mantenimientos extends Fragment {
                     requestSaveMantenimiento = null;
                     try {
                         requestSaveMantenimiento = new JSONObject();
-                        requestSaveMantenimiento.put("id_equipo", equipo.getString("id"));
+                        requestSaveMantenimiento.put("id_equipo", equipo.getString("Id"));
                     } catch (JSONException e){
                         e.printStackTrace();
                     }
@@ -225,7 +225,7 @@ public class Mantenimientos extends Fragment {
             @Override
             public void onResponse(JSONObject response) {
                 JSONObject item;
-                int responseLength = response.length() - 1;
+                int responseLength = response.length();
                 for(int index = 0; index < responseLength; index++){
                     String indexStr = Integer.toString(index);
                     try {
