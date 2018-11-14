@@ -559,7 +559,7 @@ public class Mantenimientos extends Fragment {
                                 requestSaveMantenimiento.put("empresa_mant", empresaMant.getText());
                                 requestSaveMantenimiento.put("horas_paro", horasParo.getText());
                                 requestSaveMantenimiento.put("desc_falla", descFalla.getText());
-//                                requestSaveMantenimiento.put("costo", costo);
+                                requestSaveMantenimiento.put("costo", costo);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
